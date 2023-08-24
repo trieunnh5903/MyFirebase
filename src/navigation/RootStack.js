@@ -31,7 +31,7 @@ const RootStack = () => {
     return null;
   }
   return (
-    <Stack.Navigator>
+    <Stack.Navigator screenOptions={{headerShown: false}}>
       {user == null ? (
         <>
           <Stack.Screen name="LoginScreen" component={LoginScreen} />

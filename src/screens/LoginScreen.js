@@ -8,7 +8,10 @@ import {
 } from 'react-native';
 import React, {useContext, useState} from 'react';
 import {AuthContext} from '../navigation/AuthProvider';
-
+import Icon from 'react-native-vector-icons/FontAwesome';
+import InputText from '../components/InputText';
+import ButtonCustom from '../components/ButtonCustom';
+import ButtonSocial from '../components/ButtonSocial';
 const LoginScreen = ({navigation}) => {
   const {login} = useContext(AuthContext);
   const [email, setEmail] = useState('');
@@ -29,32 +32,55 @@ const LoginScreen = ({navigation}) => {
     }
   };
   return (
-    <View style={{flex: 1, justifyContent: 'center', padding: 10}}>
-      <TextInput
+    <View
+      style={{
+        flex: 1,
+        justifyContent: 'center',
+        padding: 24,
+        backgroundColor: 'white',
+      }}>
+      {/* input email */}
+      <InputText
         value={email}
-        onChangeText={setEmail}
-        style={{borderRadius: 10, borderWidth: 1, height: 50}}
         placeholder="email"
+        onChangeText={setEmail}
+        iconName={'user'}
       />
-      <TextInput
+      {/* input password */}
+      <InputText
         value={password}
-        onChangeText={setPassword}
-        style={{borderRadius: 10, marginTop: 10, borderWidth: 1, height: 50}}
         placeholder="password"
+        onChangeText={setPassword}
+        iconName={'lock'}
       />
-      <TouchableOpacity
+      {/* login btn */}
+      <ButtonCustom
+        style={{marginTop: 20}}
         onPress={handleLoginPress}
-        style={{
-          borderRadius: 10,
-          marginTop: 10,
-          height: 50,
-          justifyContent: 'center',
-          alignItems: 'center',
-          backgroundColor: 'violet',
-        }}>
-        <Text>Login</Text>
-      </TouchableOpacity>
+        label={'Login'}
+      />
+      <View style={{marginTop: 30}}>
+        <ButtonSocial
+          buttonTitle={'Sign In with Google'}
+          color={'#de4d41'}
+          backgroundColor={'#f5e7fa'}
+          btnType={'google'}
+          onPress={() => {
+            console.log('google');
+          }}
+        />
 
+        <ButtonSocial
+          buttonTitle={'Sign In with Facebook'}
+          color={'#4867aa'}
+          backgroundColor={'#e6eaf4'}
+          btnType={'google'}
+          onPress={() => {
+            console.log('google');
+          }}
+        />
+      </View>
+      {/* btn register */}
       <TouchableOpacity
         onPress={() => navigation.navigate('RegisterScreen')}
         style={{
@@ -64,7 +90,7 @@ const LoginScreen = ({navigation}) => {
           justifyContent: 'center',
           alignItems: 'center',
         }}>
-        <Text>Register</Text>
+        <Text>Dont have account? Register</Text>
       </TouchableOpacity>
     </View>
   );

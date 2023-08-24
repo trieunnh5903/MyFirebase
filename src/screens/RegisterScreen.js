@@ -8,6 +8,8 @@ import {
 } from 'react-native';
 import React, {useContext, useState} from 'react';
 import {AuthContext} from '../navigation/AuthProvider';
+import InputText from '../components/InputText';
+import ButtonCustom from '../components/ButtonCustom';
 
 const RegisterScreen = ({navigation}) => {
   const {register} = useContext(AuthContext);
@@ -26,31 +28,32 @@ const RegisterScreen = ({navigation}) => {
     }
   };
   return (
-    <View style={{flex: 1, justifyContent: 'center', padding: 10}}>
-      <TextInput
+    <View
+      style={{
+        flex: 1,
+        justifyContent: 'center',
+        padding: 24,
+        backgroundColor: 'white',
+      }}>
+      {/* input email */}
+      <InputText
         value={email}
-        onChangeText={setEmail}
-        style={{borderRadius: 10, borderWidth: 1, height: 50}}
         placeholder="email"
+        onChangeText={setEmail}
+        iconName={'user'}
       />
-      <TextInput
+      {/* input password */}
+      <InputText
         value={password}
-        onChangeText={setPassword}
-        style={{borderRadius: 10, marginTop: 10, borderWidth: 1, height: 50}}
         placeholder="password"
+        onChangeText={setPassword}
+        iconName={'lock'}
       />
-      <TouchableOpacity
-        onPress={() => handleRegister()}
-        style={{
-          borderRadius: 10,
-          marginTop: 10,
-          height: 50,
-          justifyContent: 'center',
-          alignItems: 'center',
-          backgroundColor: 'violet',
-        }}>
-        <Text>Register</Text>
-      </TouchableOpacity>
+      <ButtonCustom
+        style={{marginTop: 10}}
+        onPress={handleRegister}
+        label={'Register'}
+      />
 
       <TouchableOpacity
         onPress={() => navigation.navigate('LoginScreen')}
@@ -61,7 +64,7 @@ const RegisterScreen = ({navigation}) => {
           justifyContent: 'center',
           alignItems: 'center',
         }}>
-        <Text>Login</Text>
+        <Text>Already have account? Login</Text>
       </TouchableOpacity>
     </View>
   );
