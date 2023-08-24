@@ -14,7 +14,7 @@ import InputText from '../components/InputText';
 import ButtonCustom from '../components/ButtonCustom';
 import ButtonSocial from '../components/ButtonSocial';
 const LoginScreen = ({navigation}) => {
-  const {login} = useContext(AuthContext);
+  const {login, onGoogleButtonPress} = useContext(AuthContext);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   function isValidEmail(emailInput) {
@@ -69,7 +69,7 @@ const LoginScreen = ({navigation}) => {
             backgroundColor={'#f5e7fa'}
             btnType={'google'}
             onPress={() => {
-              console.log('google');
+              onGoogleButtonPress();
             }}
           />
 
@@ -77,7 +77,7 @@ const LoginScreen = ({navigation}) => {
             buttonTitle={'Sign In with Facebook'}
             color={'#4867aa'}
             backgroundColor={'#e6eaf4'}
-            btnType={'google'}
+            btnType={'facebook'}
             onPress={() => {
               console.log('google');
             }}

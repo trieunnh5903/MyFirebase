@@ -1698,6 +1698,11 @@
   dependencies:
     plist "^3.0.5"
 
+"@react-native-google-signin/google-signin@^10.0.1":
+  version "10.0.1"
+  resolved "https://registry.npmjs.org/@react-native-google-signin/google-signin/-/google-signin-10.0.1.tgz"
+  integrity sha512-oZoU2lfKyn0s0GqqdFsi4v2FSENrxQYQU9DD/RSkxDdkIQ49Wwo6p5LKlgXY04GwZEVdYMuvZN3G89gQW0ig2g==
+
 "@react-native/assets-registry@^0.72.0":
   version "0.72.0"
   resolved "https://registry.npmjs.org/@react-native/assets-registry/-/assets-registry-0.72.0.tgz"

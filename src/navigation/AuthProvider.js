@@ -1,5 +1,6 @@
 import React, {createContext, useState} from 'react';
 import auth from '@react-native-firebase/auth';
+import {GoogleSignin} from '@react-native-google-signin/google-signin';
 
 export const AuthContext = createContext();
 
@@ -60,6 +61,23 @@ export const AuthProvider = ({children}) => {
       console.error(error);
     }
   };
+
+  const onGoogleButtonPress = async () => {
+    try {
+      await GoogleSignin.hasPlayServices({showPlayServicesUpdateDialog: true});
+      // Get the users ID token
+      const {idToken} = await GoogleSignin.signIn();
+
+      // Create a Google credential with the token
+      const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+
+      // Sign-in the user with the credential
+      const res = await auth().signInWithCredential(googleCredential);
+      console.log(res);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <AuthContext.Provider
       value={{
@@ -68,6 +86,7 @@ export const AuthProvider = ({children}) => {
         register,
         login,
         logout,
+        onGoogleButtonPress,
       }}>
       {children}
     </AuthContext.Provider>
