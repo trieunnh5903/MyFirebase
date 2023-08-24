@@ -14,7 +14,7 @@ const PhoneAuth = () => {
   const [phoneNumber, setPhoneNumber] = useState('');
   // verification code (OTP - One-Time-Passcode)
   const [code, setCode] = useState('');
-
+  const [isLoading, setIsLoading] = useState(false);
   // Handle login
   function onAuthStateChanged(user) {
     if (user) {
@@ -35,6 +35,7 @@ const PhoneAuth = () => {
   async function signInWithPhoneNumber(numPhone) {
     const confirmation = await auth().signInWithPhoneNumber(numPhone);
     console.log('Verification code sent.');
+    // setIsLoading(false);
     setConfirm(confirmation);
   }
 
@@ -48,17 +49,21 @@ const PhoneAuth = () => {
   }
 
   const handlerSendCodePress = () => {
-    //chuyen sang ma quoc te +84
+    if (phoneNumber.length < 10) return;
+    setIsLoading(true);
+    // chuyen sang ma quoc te +84
     let phoneNumberConvert = '';
     if (phoneNumber.charAt(0) === '0') {
       phoneNumberConvert = '+84' + phoneNumber.slice(1);
+    } else {
+      phoneNumberConvert = phoneNumber;
     }
     signInWithPhoneNumber(phoneNumberConvert);
   };
   if (!confirm) {
     return (
       <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-        <Text>Please enter your phone number</Text>
+        <Text style={{color: 'black'}}>Please enter your phone number</Text>
         <TextInput
           style={styles.input}
           value={phoneNumber}
@@ -67,7 +72,7 @@ const PhoneAuth = () => {
         <ButtonCustom
           style={{padding: 10}}
           onPress={() => handlerSendCodePress()}
-          label={'Send code'}
+          label={isLoading === false ? 'Send code' : 'Loading...'}
         />
       </View>
     );
