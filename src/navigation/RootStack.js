@@ -7,6 +7,7 @@ import {AuthContext} from './AuthProvider';
 import HomeScreen from '../screens/HomeScreen';
 import auth from '@react-native-firebase/auth';
 import PhoneAuth from '../screens/PhoneAuth';
+import AddPost from '../screens/AddPost';
 const Stack = createNativeStackNavigator();
 
 const RootStack = () => {
@@ -35,13 +36,14 @@ const RootStack = () => {
     <Stack.Navigator screenOptions={{headerShown: false}}>
       {user == null ? (
         <>
-          <Stack.Screen name="PhoneAuth" component={PhoneAuth} />
           <Stack.Screen name="LoginScreen" component={LoginScreen} />
           <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
         </>
       ) : (
         <>
+          <Stack.Screen name="PhoneAuth" component={PhoneAuth} />
           <Stack.Screen name="HomeScreen" component={HomeScreen} />
+          <Stack.Screen name="AddPost" component={AddPost} />
         </>
       )}
     </Stack.Navigator>

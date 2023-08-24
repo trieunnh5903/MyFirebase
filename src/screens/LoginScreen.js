@@ -9,7 +9,6 @@ import {
 } from 'react-native';
 import React, {useContext, useState} from 'react';
 import {AuthContext} from '../navigation/AuthProvider';
-import Icon from 'react-native-vector-icons/FontAwesome';
 import InputText from '../components/InputText';
 import ButtonCustom from '../components/ButtonCustom';
 import ButtonSocial from '../components/ButtonSocial';

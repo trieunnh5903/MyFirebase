@@ -7,10 +7,11 @@ const ButtonCustom = ({onPress, label, style}) => {
       onPress={() => onPress()}
       style={{
         borderRadius: 3,
+        padding: 10,
         height: 50,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: 'blue',
+        backgroundColor: '#3b5998',
         ...style
       }}>
       <Text style={{color: 'white', fontSize: 16, fontWeight: 'bold'}}>

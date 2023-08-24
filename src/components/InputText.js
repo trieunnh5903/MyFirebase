@@ -1,17 +1,30 @@
-import {StyleSheet, Text, TextInput, View} from 'react-native';
+import {
+  StyleSheet,
+  Platform,
+  TextInput,
+  KeyboardAvoidingView,
+} from 'react-native';
 import React from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome';
 const InputText = ({placeholder = '', value, onChangeText, iconName}) => {
   return (
-    <View style={styles.container}>
-      <Icon name={iconName} size={24} style={{paddingHorizontal: 15}} />
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={styles.container}>
+      <Icon
+        name={iconName}
+        color={'black'}
+        size={24}
+        style={{paddingHorizontal: 15}}
+      />
       <TextInput
-        style={{borderLeftWidth: 1, paddingLeft: 10}}
+        style={{borderLeftWidth: 1, color: 'black', paddingLeft: 10, flex: 1}}
         value={value}
+        placeholderTextColor={'black'}
         onChangeText={onChangeText}
         placeholder={placeholder}
       />
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 

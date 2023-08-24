@@ -9,7 +9,7 @@ import {
 import React, {useState, useEffect} from 'react';
 import auth from '@react-native-firebase/auth';
 import ButtonCustom from '../components/ButtonCustom';
-const PhoneAuth = () => {
+const PhoneAuth = ({navigation}) => {
   const [confirm, setConfirm] = useState(null);
   const [phoneNumber, setPhoneNumber] = useState('');
   // verification code (OTP - One-Time-Passcode)
@@ -49,7 +49,9 @@ const PhoneAuth = () => {
   }
 
   const handlerSendCodePress = () => {
-    if (phoneNumber.length < 10) return;
+    if (phoneNumber.length < 10) {
+      return;
+    }
     setIsLoading(true);
     // chuyen sang ma quoc te +84
     let phoneNumberConvert = '';
@@ -63,8 +65,13 @@ const PhoneAuth = () => {
   if (!confirm) {
     return (
       <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+        <View style={{position: 'absolute', top: 24, left: 24}}>
+          <Text style={{color: 'black', fontSize: 18}}>OTP Authentication</Text>
+        </View>
         <Text style={{color: 'black'}}>Please enter your phone number</Text>
         <TextInput
+          placeholder="Phone Number"
+          placeholderTextColor={'gray'}
           style={styles.input}
           value={phoneNumber}
           onChangeText={text => setPhoneNumber(text)}
@@ -74,12 +81,18 @@ const PhoneAuth = () => {
           onPress={() => handlerSendCodePress()}
           label={isLoading === false ? 'Send code' : 'Loading...'}
         />
+        <ButtonCustom
+          style={{marginTop: 10}}
+          onPress={() => navigation.navigate('HomeScreen')}
+          label={'Skip'}
+        />
       </View>
     );
   }
   return (
     <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
       <TextInput
+        placeholderTextColor={'black'}
         placeholder="Enter code..."
         style={styles.input}
         value={code}
