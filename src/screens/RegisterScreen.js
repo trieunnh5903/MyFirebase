@@ -21,10 +21,14 @@ const RegisterScreen = ({navigation}) => {
 
     return emailPattern.test(emailInput);
   }
-  const handleRegister = () => {
+  const handleRegister = async () => {
     if (email && password && isValidEmail(email)) {
       console.log(email, password);
-      register(email, password);
+      const response = await register(email, password);
+      if (response?.user) {
+        navigation.navigate('LoginScreen');
+        console.log('User account created & signed in!');
+      }
     }
   };
   return (
@@ -56,7 +60,7 @@ const RegisterScreen = ({navigation}) => {
       />
 
       <TouchableOpacity
-        onPress={() => navigation.navigate('LoginScreen')}
+        onPress={() => navigation.navigate('PhoneAuth')}
         style={{
           borderRadius: 10,
           marginTop: 40,
@@ -64,7 +68,7 @@ const RegisterScreen = ({navigation}) => {
           justifyContent: 'center',
           alignItems: 'center',
         }}>
-        <Text>Already have account? Login</Text>
+        <Text style={{color: 'black'}}>Already have account? Login</Text>
       </TouchableOpacity>
     </View>
   );

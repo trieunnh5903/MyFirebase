@@ -7,13 +7,10 @@ export const AuthContext = createContext();
 
 export const AuthProvider = ({children}) => {
   const [user, setUser] = useState(null);
+  const [skipOTP, setSkipOTP] = useState(false);
   const register = async (email, password) => {
     try {
-      await auth()
-        .createUserWithEmailAndPassword(email, password)
-        .then(() => {
-          console.log('User account created & signed in!');
-        });
+      return await auth().createUserWithEmailAndPassword(email, password);
     } catch (error) {
       if (error.code === 'auth/email-already-in-use') {
         console.log('That email address is already in use!');
@@ -29,11 +26,7 @@ export const AuthProvider = ({children}) => {
 
   const login = async (email, password) => {
     try {
-      await auth()
-        .signInWithEmailAndPassword(email, password)
-        .then(() => {
-          console.log('User account signed in!');
-        });
+      return await auth().signInWithEmailAndPassword(email, password);
     } catch (error) {
       if (error.code === 'auth/user-not-found') {
         console.log('That email address is not exsisted!');
@@ -56,6 +49,7 @@ export const AuthProvider = ({children}) => {
       await auth()
         .signOut()
         .then(() => {
+          setSkipOTP(false);
           console.log('User account signed out!');
         });
     } catch (error) {
@@ -114,6 +108,8 @@ export const AuthProvider = ({children}) => {
   return (
     <AuthContext.Provider
       value={{
+        setSkipOTP,
+        skipOTP,
         user,
         setUser,
         register,

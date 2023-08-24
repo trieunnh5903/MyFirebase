@@ -11,7 +11,7 @@ import AddPost from '../screens/AddPost';
 const Stack = createNativeStackNavigator();
 
 const RootStack = () => {
-  const {user, setUser} = useContext(AuthContext);
+  const {user, setUser, skipOTP} = useContext(AuthContext);
   // Set an initializing state whilst Firebase connects
   const [initializing, setInitializing] = useState(true);
   const onAuthStateChanged = useCallback(
@@ -34,16 +34,16 @@ const RootStack = () => {
   }
   return (
     <Stack.Navigator screenOptions={{headerShown: false}}>
-      {user == null ? (
+      {user !== null && skipOTP === true ? (
         <>
-          <Stack.Screen name="LoginScreen" component={LoginScreen} />
-          <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
+          <Stack.Screen name="HomeScreen" component={HomeScreen} />
+          <Stack.Screen name="AddPost" component={AddPost} />
         </>
       ) : (
         <>
+          <Stack.Screen name="LoginScreen" component={LoginScreen} />
+          <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
           <Stack.Screen name="PhoneAuth" component={PhoneAuth} />
-          <Stack.Screen name="HomeScreen" component={HomeScreen} />
-          <Stack.Screen name="AddPost" component={AddPost} />
         </>
       )}
     </Stack.Navigator>

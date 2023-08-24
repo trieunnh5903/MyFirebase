@@ -6,10 +6,12 @@ import {
   View,
   TouchableOpacity,
 } from 'react-native';
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import auth from '@react-native-firebase/auth';
 import ButtonCustom from '../components/ButtonCustom';
+import {AuthContext} from '../navigation/AuthProvider';
 const PhoneAuth = ({navigation}) => {
+  const {setSkipOTP} = useContext(AuthContext);
   const [confirm, setConfirm] = useState(null);
   const [phoneNumber, setPhoneNumber] = useState('');
   // verification code (OTP - One-Time-Passcode)
@@ -83,7 +85,7 @@ const PhoneAuth = ({navigation}) => {
         />
         <ButtonCustom
           style={{marginTop: 10}}
-          onPress={() => navigation.navigate('HomeScreen')}
+          onPress={() => setSkipOTP(true)}
           label={'Skip'}
         />
       </View>

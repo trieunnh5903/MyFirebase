@@ -23,10 +23,14 @@ const LoginScreen = ({navigation}) => {
 
     return emailPattern.test(emailInput);
   }
-  const handleLoginPress = () => {
+  const handleLoginPress = async () => {
     if (email && password) {
       if (isValidEmail(email)) {
-        login(email, password);
+        const response = await login(email, password);
+        if (response?.user) {
+          console.log('User account signed in!');
+          navigation.navigate('PhoneAuth');
+        }
       } else {
         console.log('Please enter a valid email');
       }
@@ -95,7 +99,7 @@ const LoginScreen = ({navigation}) => {
           justifyContent: 'center',
           alignItems: 'center',
         }}>
-        <Text>Dont have account? Register</Text>
+        <Text style={{color: 'black'}}>Dont have account? Register</Text>
       </TouchableOpacity>
     </View>
   );
