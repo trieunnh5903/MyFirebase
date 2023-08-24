@@ -5,6 +5,7 @@ import {
   View,
   TextInput,
   TouchableOpacity,
+  Platform,
 } from 'react-native';
 import React, {useContext, useState} from 'react';
 import {AuthContext} from '../navigation/AuthProvider';
@@ -59,27 +60,31 @@ const LoginScreen = ({navigation}) => {
         onPress={handleLoginPress}
         label={'Login'}
       />
-      <View style={{marginTop: 30}}>
-        <ButtonSocial
-          buttonTitle={'Sign In with Google'}
-          color={'#de4d41'}
-          backgroundColor={'#f5e7fa'}
-          btnType={'google'}
-          onPress={() => {
-            console.log('google');
-          }}
-        />
+      {/* social button */}
+      {Platform.OS === 'android' && (
+        <View style={{marginTop: 30}}>
+          <ButtonSocial
+            buttonTitle={'Sign In with Google'}
+            color={'#de4d41'}
+            backgroundColor={'#f5e7fa'}
+            btnType={'google'}
+            onPress={() => {
+              console.log('google');
+            }}
+          />
 
-        <ButtonSocial
-          buttonTitle={'Sign In with Facebook'}
-          color={'#4867aa'}
-          backgroundColor={'#e6eaf4'}
-          btnType={'google'}
-          onPress={() => {
-            console.log('google');
-          }}
-        />
-      </View>
+          <ButtonSocial
+            buttonTitle={'Sign In with Facebook'}
+            color={'#4867aa'}
+            backgroundColor={'#e6eaf4'}
+            btnType={'google'}
+            onPress={() => {
+              console.log('google');
+            }}
+          />
+        </View>
+      )}
+
       {/* btn register */}
       <TouchableOpacity
         onPress={() => navigation.navigate('RegisterScreen')}
