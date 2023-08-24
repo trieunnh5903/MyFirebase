@@ -6,6 +6,7 @@ import RegisterScreen from '../screens/RegisterScreen';
 import {AuthContext} from './AuthProvider';
 import HomeScreen from '../screens/HomeScreen';
 import auth from '@react-native-firebase/auth';
+import PhoneAuth from '../screens/PhoneAuth';
 const Stack = createNativeStackNavigator();
 
 const RootStack = () => {
@@ -34,6 +35,7 @@ const RootStack = () => {
     <Stack.Navigator screenOptions={{headerShown: false}}>
       {user == null ? (
         <>
+          <Stack.Screen name="PhoneAuth" component={PhoneAuth} />
           <Stack.Screen name="LoginScreen" component={LoginScreen} />
           <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
         </>
