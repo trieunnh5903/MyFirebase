@@ -1,7 +1,13 @@
-import {View, TouchableOpacity, Text} from 'react-native';
+import {ActivityIndicator, TouchableOpacity, Text} from 'react-native';
 import React from 'react';
 
-const ButtonCustom = ({onPress, label, style}) => {
+const ButtonCustom = ({
+  onPress,
+  label,
+  style,
+  labelColor,
+  isLoading = false,
+}) => {
   return (
     <TouchableOpacity
       onPress={() => onPress()}
@@ -12,11 +18,20 @@ const ButtonCustom = ({onPress, label, style}) => {
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: '#3b5998',
-        ...style
+        ...style,
       }}>
-      <Text style={{color: 'white', fontSize: 16, fontWeight: 'bold'}}>
-        {label}
-      </Text>
+      {isLoading ? (
+        <ActivityIndicator size="small" color="#fff" />
+      ) : (
+        <Text
+          style={{
+            color: labelColor || 'white',
+            fontSize: 16,
+            fontWeight: 'bold',
+          }}>
+          {label}
+        </Text>
+      )}
     </TouchableOpacity>
   );
 };

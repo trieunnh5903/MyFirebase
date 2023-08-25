@@ -69,6 +69,7 @@ export const AuthProvider = ({children}) => {
       // Sign-in the user with the credential
       const res = await auth().signInWithCredential(googleCredential);
       console.log(res);
+      setSkipOTP(true);
     } catch (error) {
       console.log(error);
     }
@@ -101,6 +102,7 @@ export const AuthProvider = ({children}) => {
       // Sign-in the user with the credential
       const res = auth().signInWithCredential(facebookCredential);
       console.log(res);
+      setSkipOTP(true);
     } catch (error) {
       console.log(error);
     }
