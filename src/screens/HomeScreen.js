@@ -3,16 +3,18 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  Image,
   View,
-  ScrollView,
   FlatList,
+  Alert,
 } from 'react-native';
 import React, {useContext, useEffect, useState} from 'react';
 import {AuthContext} from '../navigation/AuthProvider';
 import ButtonCustom from '../components/ButtonCustom';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import firestore from '@react-native-firebase/firestore';
+import FastImage from 'react-native-fast-image';
+import storage from '@react-native-firebase/storage';
+
 const HomeScreen = ({navigation}) => {
   const {logout, user} = useContext(AuthContext);
   const [posts, setPosts] = useState([]);
@@ -52,6 +54,55 @@ const HomeScreen = ({navigation}) => {
     return () => unsubscribe();
   }, []);
 
+  const deleteImage = async imageUrl => {
+    try {
+      if (!imageUrl) {
+        return;
+      }
+      await storage().refFromURL(imageUrl).delete();
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
+  const deletePost = async postId => {
+    try {
+      if (!postId) {
+        return;
+      }
+      await firestore().collection('Posts').doc(postId).delete();
+      console.log('delete post', postId);
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+  const onPostPress = async (postId, imageUrl) => {
+    // xóa post dựa trên id post
+    // xóa ảnh dựa trên url ảnh
+    try {
+      // xác nhận người dùng xóa
+      Alert.alert('Delete post', 'Are you sure you want to delete?', [
+        {
+          text: 'Cancel',
+          onPress: () => {
+            return;
+          },
+          style: 'cancel',
+        },
+        {
+          text: 'Delete',
+          style: 'default',
+          onPress: async () => {
+            await deletePost(postId);
+            await deleteImage(imageUrl);
+            Alert.alert('Delete post', 'Post deleted successfully');
+          },
+        },
+      ]);
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
   return (
     <View style={{flex: 1}}>
       {/* add button */}
@@ -94,6 +145,7 @@ const HomeScreen = ({navigation}) => {
           label={'Logout'}
         />
       </View>
+      {/* danh sách bài post */}
       <FlatList
         contentContainerStyle={{padding: 20}}
         data={posts}
@@ -104,27 +156,47 @@ const HomeScreen = ({navigation}) => {
             date.getMonth() + 1
           }/${date.getFullYear()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
           return (
-            <View style={index !== 0 && {marginTop: 20}} key={item.id}>
+            <View
+              style={{
+                marginTop: index !== 0 ? 20 : 0,
+                backgroundColor: '#e6eaf4',
+                borderColor: 'gray',
+                padding: 10,
+                borderRadius: 3,
+              }}>
+              {/* title */}
               <View
                 style={{
-                  borderWidth: 1,
-                  borderColor: 'gray',
-                  padding: 10,
-                  borderRadius: 3,
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
                 }}>
-                <Text style={{color: 'black', marginBottom: 5}}>
+                <Text
+                  style={{
+                    color: 'black',
+                    fontWeight: 'bold',
+                    marginBottom: 5,
+                  }}>
                   {item.title}
                 </Text>
-                <Text style={{color: 'black', marginBottom: 5}}>
-                  Created at {formattedDate}
-                </Text>
-                <Image
-                  style={{width: '100%', height: 200}}
-                  source={{
-                    uri: item.imageUrl,
-                  }}
-                />
+                {/* nut xoa */}
+                <TouchableOpacity
+                  onPress={() => onPostPress(item.id, item.imageUrl)}>
+                  <Icon name="close" size={24} color="black" />
+                </TouchableOpacity>
               </View>
+              {/* created at */}
+              <Text style={{color: 'black', marginBottom: 5}}>
+                Created at {formattedDate}
+              </Text>
+              {/* image */}
+              <FastImage
+                style={{width: '100%', height: 200}}
+                source={{
+                  uri: item.imageUrl,
+                  priority: FastImage.priority.normal,
+                }}
+                resizeMode={FastImage.resizeMode.cover}
+              />
             </View>
           );
         }}

@@ -15,7 +15,7 @@ import {
 import React, {useState, useContext} from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import ButtonCustom from '../components/ButtonCustom';
-import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
+import {launchImageLibrary} from 'react-native-image-picker';
 import storage from '@react-native-firebase/storage';
 import firestore from '@react-native-firebase/firestore';
 import {AuthContext} from '../navigation/AuthProvider';
