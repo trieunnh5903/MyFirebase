@@ -26,7 +26,6 @@ export const addUserToFirestore = () => {
       lastSignInTime,
       phoneNumber,
       photoURL,
-      uid,
     })
     .then(() => console.log('add user to firestore successfully'))
     .catch(err => console.error('addUserToFirestore' + err));
