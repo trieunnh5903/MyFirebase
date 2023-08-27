@@ -1703,6 +1703,11 @@
   resolved "https://registry.npmjs.org/@react-native-firebase/firestore/-/firestore-18.3.1.tgz"
   integrity sha512-+ot8gdZufsfXGbqW6F4sORxEPXhW2l/LnbJBKxhCVM+w0FikYJJu3VtEneumvojNP4KC0Ci+xn6aCvI5qkqZ6Q==
 
+"@react-native-firebase/messaging@^18.3.1":
+  version "18.3.1"
+  resolved "https://registry.npmjs.org/@react-native-firebase/messaging/-/messaging-18.3.1.tgz"
+  integrity sha512-83WPEPY7bIpyBsXv9zjlMtnPz9MotBCnx7wGG7frjPV8VSh8XLPxjiPtngy734NrRfEwqCbMoDssnWos1njq6w==
+
 "@react-native-firebase/storage@^18.3.1":
   version "18.3.1"
   resolved "https://registry.npmjs.org/@react-native-firebase/storage/-/storage-18.3.1.tgz"
