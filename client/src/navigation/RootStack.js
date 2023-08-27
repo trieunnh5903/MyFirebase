@@ -3,7 +3,7 @@ import React, {useContext, useState, useEffect, useCallback} from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import LoginScreen from '../screens/LoginScreen';
 import RegisterScreen from '../screens/RegisterScreen';
-import {AuthContext} from './AuthProvider';
+import {AuthContext} from '../utils/AuthProvider';
 import HomeScreen from '../screens/HomeScreen';
 import auth from '@react-native-firebase/auth';
 import PhoneAuth from '../screens/PhoneAuth';

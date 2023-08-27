@@ -18,13 +18,13 @@ import ButtonCustom from '../components/ButtonCustom';
 import {launchImageLibrary} from 'react-native-image-picker';
 import storage from '@react-native-firebase/storage';
 import firestore from '@react-native-firebase/firestore';
-import {AuthContext} from '../navigation/AuthProvider';
+import auth from '@react-native-firebase/auth';
 
 const AddPost = () => {
   const [filePatch, setFilePatch] = useState(null);
   const [title, setTitle] = useState('');
   const [uploading, setUploading] = useState(false);
-  const {user} = useContext(AuthContext);
+  const {uid} = auth().currentUser;
   //image picker lay anh
   const onGetImagePress = async () => {
     const result = await launchImageLibrary({
@@ -78,7 +78,7 @@ const AddPost = () => {
           title: title,
           imageUrl: imageUrl,
           createdAt: firestore.FieldValue.serverTimestamp(),
-          userId: user.uid,
+          userId: uid,
           likes: null,
           comments: null,
         })

@@ -8,7 +8,7 @@ import {
   Platform,
 } from 'react-native';
 import React, {useContext, useState} from 'react';
-import {AuthContext} from '../navigation/AuthProvider';
+import {AuthContext} from '../utils/AuthProvider';
 import InputText from '../components/InputText';
 import ButtonCustom from '../components/ButtonCustom';
 import ButtonSocial from '../components/ButtonSocial';

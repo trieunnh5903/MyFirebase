@@ -2,6 +2,7 @@ import React, {createContext, useState} from 'react';
 import auth from '@react-native-firebase/auth';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import {LoginManager, AccessToken} from 'react-native-fbsdk-next';
+import {addUserToFirestore} from './firebase/UserHepler';
 
 export const AuthContext = createContext();
 
@@ -68,7 +69,7 @@ export const AuthProvider = ({children}) => {
 
       // Sign-in the user with the credential
       const res = await auth().signInWithCredential(googleCredential);
-      console.log(res);
+      // console.log(res);
       setSkipOTP(true);
     } catch (error) {
       console.log(error);

@@ -9,7 +9,7 @@ import {
 import React, {useState, useEffect, useContext} from 'react';
 import auth from '@react-native-firebase/auth';
 import ButtonCustom from '../components/ButtonCustom';
-import {AuthContext} from '../navigation/AuthProvider';
+import {AuthContext} from '../utils/AuthProvider';
 const PhoneAuth = ({navigation}) => {
   const {setSkipOTP} = useContext(AuthContext);
   const [confirm, setConfirm] = useState(null);

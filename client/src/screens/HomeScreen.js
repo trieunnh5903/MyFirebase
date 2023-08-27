@@ -1,4 +1,3 @@
-/* eslint-disable react-native/no-inline-styles */
 import {
   StyleSheet,
   Text,
@@ -8,18 +7,24 @@ import {
   Alert,
 } from 'react-native';
 import React, {useContext, useEffect, useState} from 'react';
-import {AuthContext} from '../navigation/AuthProvider';
+import {AuthContext} from '../utils/AuthProvider';
 import ButtonCustom from '../components/ButtonCustom';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import firestore from '@react-native-firebase/firestore';
 import FastImage from 'react-native-fast-image';
 import storage from '@react-native-firebase/storage';
+import {addUserToFirestore} from '../utils/firebase/UserHepler';
+import auth from '@react-native-firebase/auth';
 
 const HomeScreen = ({navigation}) => {
-  const {logout, user} = useContext(AuthContext);
+  const {logout} = useContext(AuthContext);
   const [posts, setPosts] = useState([]);
-
+  const user = auth().currentUser;
+  // console.log(user);
   useEffect(() => {
+    // thêm người dùng vào firebase
+    addUserToFirestore();
+    //lấy danh sách bài viết từ firebase
     let data = [];
     const unsubscribe = firestore()
       .collection('Posts')
