@@ -1,6 +1,7 @@
 import messaging from '@react-native-firebase/messaging';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
+import {Alert} from 'react-native';
 
 export async function requestUserPermission() {
   // xin quyền POST_NOTIFICATIONS trên ios,chỉ android api 32+ mới cần xin quyền
@@ -14,7 +15,6 @@ export async function requestUserPermission() {
   }
 }
 
-
 export async function saveTokenToDatabase(token) {
   try {
     // Assume user is already signed in
@@ -25,7 +25,7 @@ export async function saveTokenToDatabase(token) {
         .collection('Users')
         .doc(userId)
         .update({tokens: firestore.FieldValue.arrayUnion(token)});
-      console.log('save token to firebase successfully');
+      console.log('update token to firebase successfully');
     }
   } catch (error) {
     console.log('saveTokenToDatabase: ' + err);
@@ -67,5 +67,14 @@ export function interactionNotification() {
   // lắng nghe khi có thông báo đến ở foreground: onMessage
   messaging().onMessage(async remoteMessage => {
     Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
+  });
+}
+
+export function handlerOnMessageForeground() {
+  return messaging().onMessage(async remoteMessage => {
+    Alert.alert(
+      'onMessage: A new FCM message arrived!',
+      JSON.stringify(remoteMessage),
+    );
   });
 }

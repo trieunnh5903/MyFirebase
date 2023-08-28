@@ -1,4 +1,3 @@
-/* eslint-disable react-native/no-inline-styles */
 import {
   StyleSheet,
   Text,
@@ -7,20 +6,20 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import React, {useContext, useState} from 'react';
-import {AuthContext} from '../utils/AuthProvider';
 import InputText from '../components/InputText';
 import ButtonCustom from '../components/ButtonCustom';
+import { register } from '../utils/firebase/AuthencationHelper';
 
 const RegisterScreen = ({navigation}) => {
-  const {register} = useContext(AuthContext);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
   function isValidEmail(emailInput) {
     // Regular expression pattern for basic email validation
     const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
-
     return emailPattern.test(emailInput);
   }
+
   const handleRegister = async () => {
     if (email && password && isValidEmail(email)) {
       console.log(email, password);
@@ -31,6 +30,7 @@ const RegisterScreen = ({navigation}) => {
       }
     }
   };
+
   return (
     <View
       style={{

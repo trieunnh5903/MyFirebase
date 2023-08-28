@@ -11,23 +11,22 @@ import AddPost from '../screens/AddPost';
 const Stack = createNativeStackNavigator();
 
 const RootStack = () => {
-  const {user, setUser, skipOTP} = useContext(AuthContext);
+  // const {user, setUser, skipOTP} = useContext(AuthContext);
+  const {skipOTP} = useContext(AuthContext);
+  const [user, setUser] = useState(null);
   // Set an initializing state whilst Firebase connects
   const [initializing, setInitializing] = useState(true);
-  const onAuthStateChanged = useCallback(
-    response => {
-      setUser(response);
-      if (initializing) {
-        setInitializing(false);
-      }
-    },
-    [initializing, setUser],
-  );
+  const onAuthStateChanged = response => {
+    setUser(response);
+    if (initializing) {
+      setInitializing(false);
+    }
+  };
 
   useEffect(() => {
     const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
     return subscriber; // unsubscribe on unmount
-  }, [onAuthStateChanged]);
+  }, []);
 
   if (initializing) {
     return null;

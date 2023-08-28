@@ -10,10 +10,7 @@ import React, {useContext, useEffect, useState} from 'react';
 import {AuthContext} from '../utils/AuthProvider';
 import ButtonCustom from '../components/ButtonCustom';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import firestore from '@react-native-firebase/firestore';
 import FastImage from 'react-native-fast-image';
-import storage from '@react-native-firebase/storage';
-import {addUserToFirestore} from '../utils/firebase/UserHepler';
 import auth from '@react-native-firebase/auth';
 import messaging from '@react-native-firebase/messaging';
 import {
@@ -21,9 +18,16 @@ import {
   requestUserPermission,
   saveTokenToDatabase,
 } from '../utils/firebase/ClouldMessagingHelper';
+import {logout} from '../utils/firebase/AuthencationHelper';
+import {
+  deleteImageByUrl,
+  deletePostById,
+  addUserToFirestore,
+  getAllPost,
+} from '../utils/firebase/FirestoreHepler';
 
 const HomeScreen = ({navigation}) => {
-  const {logout} = useContext(AuthContext);
+  const {setSkipOTP} = useContext(AuthContext);
   const [posts, setPosts] = useState([]);
   const user = auth().currentUser;
   useEffect(() => {
@@ -32,42 +36,11 @@ const HomeScreen = ({navigation}) => {
     //xin quyền push notifications
     requestUserPermission();
     //kiểm tra token devices
-    const handleAsyncFunction = async () => {
-      await getFcmToken();
-    };
-    handleAsyncFunction();
-    //lấy danh sách bài viết từ firebase
-    let data = [];
-    const unsubscribe = firestore()
-      .collection('Posts')
-      .orderBy('createdAt', 'desc')
-      // onSnapshot chứa callbacks trả về kq và 1 callbacks xử lí error
-      .onSnapshot(querySnapshot => {
-        // câu lệnh chỉ chạy onsnapshot mỗi khi data thay đổi vì vậy cần set data = [] để tránh lặp lại dữ liệu
-        // toán tử spread không xử lí trùng dữ liệu
-        data = [];
-        querySnapshot.forEach(docs => {
-          if (docs.exists) {
-            // với các dữ liệu lồng sâu thì destructuring sẽ không có tác dụng, ta sử dụng toán tử chấm ở dưới
-            let seconds = docs.get('createdAt.seconds');
-            const {comments, imageUrl, likes, title, userId} = docs.data();
-            data = [
-              ...data,
-              {
-                id: docs.id,
-                title,
-                imageUrl,
-                comments,
-                //ngay duoc tao bang firestore.FieldValue.serverTimestamp() se tra ve 1 object chứa ngày dưới dạng nano seconds và seconds
-                createdAt: seconds,
-                likes,
-                userId,
-              },
-            ];
-          }
-        });
-        setPosts(data);
-      });
+    getFcmToken();
+    //lấy danh sách bài post
+    const unsubscribe = getAllPost(data => {
+      setPosts(data);
+    });
     return () => {
       unsubscribe();
       // Được gọi khi mã thông báo đăng ký mới được tạo cho thiết bị. Ví dụ: sự kiện này có thể xảy ra khi mã thông báo hết hạn hoặc khi máy chủ vô hiệu hóa mã thông báo.
@@ -77,31 +50,7 @@ const HomeScreen = ({navigation}) => {
     };
   }, []);
 
-  const deleteImage = async imageUrl => {
-    try {
-      if (!imageUrl) {
-        return;
-      }
-      await storage().refFromURL(imageUrl).delete();
-    } catch (error) {
-      console.log(error.message);
-    }
-  };
-
-  const deletePost = async postId => {
-    try {
-      if (!postId) {
-        return;
-      }
-      await firestore().collection('Posts').doc(postId).delete();
-      console.log('delete post', postId);
-    } catch (error) {
-      console.log(error.message);
-    }
-  };
-  const onPostPress = async (postId, imageUrl) => {
-    // xóa post dựa trên id post
-    // xóa ảnh dựa trên url ảnh
+  const onDeletePostPress = async (postId, imageUrl) => {
     try {
       // xác nhận người dùng xóa
       Alert.alert('Delete post', 'Are you sure you want to delete?', [
@@ -116,16 +65,22 @@ const HomeScreen = ({navigation}) => {
           text: 'Delete',
           style: 'default',
           onPress: async () => {
-            await deletePost(postId);
-            await deleteImage(imageUrl);
+            await deletePostById(postId);
+            await deleteImageByUrl(imageUrl);
             Alert.alert('Delete post', 'Post deleted successfully');
           },
         },
       ]);
     } catch (error) {
-      console.log(error.message);
+      console.log('onDeletePostPress', error.message);
     }
   };
+
+  const handleLogoutPress = async () => {
+    await logout();
+    setSkipOTP(false);
+  };
+
   return (
     <View style={{flex: 1}}>
       {/* add button */}
@@ -159,7 +114,7 @@ const HomeScreen = ({navigation}) => {
         </Text>
         {/* nut logout */}
         <ButtonCustom
-          onPress={logout}
+          onPress={handleLogoutPress}
           labelColor={'#4867aa'}
           style={{
             marginHorizontal: 10,
@@ -203,7 +158,7 @@ const HomeScreen = ({navigation}) => {
                 </Text>
                 {/* nut xoa */}
                 <TouchableOpacity
-                  onPress={() => onPostPress(item.id, item.imageUrl)}>
+                  onPress={() => onDeletePostPress(item.id, item.imageUrl)}>
                   <Icon name="close" size={24} color="black" />
                 </TouchableOpacity>
               </View>

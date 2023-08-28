@@ -12,13 +12,15 @@ import {
   Alert,
   Keyboard,
 } from 'react-native';
-import React, {useState, useContext} from 'react';
+import React, {useState} from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import ButtonCustom from '../components/ButtonCustom';
 import {launchImageLibrary} from 'react-native-image-picker';
 import storage from '@react-native-firebase/storage';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
+import {addImageToStorage} from '../utils/firebase/CloudStorage';
+import {addPostToFirestore} from '../utils/firebase/FirestoreHepler';
 
 const AddPost = () => {
   const [filePatch, setFilePatch] = useState(null);
@@ -67,30 +69,30 @@ const AddPost = () => {
   };
 
   const onPostPress = async () => {
-    Keyboard.dismiss();
-    if (title && filePatch) {
-      setUploading(true);
-      const postsCollection = firestore().collection('Posts');
-      const imageUrl = await handlerPostImage();
-      console.log(imageUrl);
-      postsCollection
-        .add({
-          title: title,
-          imageUrl: imageUrl,
-          createdAt: firestore.FieldValue.serverTimestamp(),
-          userId: uid,
-          likes: null,
-          comments: null,
-        })
-        .then(() => {
-          setFilePatch(null);
-          setTitle('');
+    try {
+      Keyboard.dismiss();
+      if (title && filePatch) {
+        setUploading(true);
+        const imageUrl = await addImageToStorage(filePatch.uri);
+        console.log(imageUrl);
+        if (imageUrl) {
+          await addPostToFirestore({
+            title: title,
+            imageUrl: imageUrl,
+            createdAt: firestore.FieldValue.serverTimestamp(),
+            userId: uid,
+            likes: null,
+            comments: null,
+          });
           Alert.alert('Post added!');
-        })
-        .catch(err => {
-          console.log(err.message);
-        })
-        .finally(() => setUploading(false));
+        }
+      }
+    } catch (error) {
+      console.log('onPostPress', error.message);
+    } finally {
+      setFilePatch(null);
+      setTitle('');
+      setUploading(false);
     }
   };
   return (

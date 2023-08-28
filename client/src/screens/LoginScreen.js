@@ -1,28 +1,25 @@
-/* eslint-disable react-native/no-inline-styles */
-import {
-  StyleSheet,
-  Text,
-  View,
-  TextInput,
-  TouchableOpacity,
-  Platform,
-} from 'react-native';
+import {StyleSheet, Text, View, TouchableOpacity, Platform} from 'react-native';
 import React, {useContext, useState} from 'react';
 import {AuthContext} from '../utils/AuthProvider';
 import InputText from '../components/InputText';
 import ButtonCustom from '../components/ButtonCustom';
 import ButtonSocial from '../components/ButtonSocial';
+import {
+  login,
+  onFacebookButtonPress,
+  onGoogleButtonPress,
+} from '../utils/firebase/AuthencationHelper';
 const LoginScreen = ({navigation}) => {
-  const {login, onGoogleButtonPress, onFacebookButtonPress} =
-    useContext(AuthContext);
+  const {setSkipOTP} = useContext(AuthContext);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
   function isValidEmail(emailInput) {
     // Regular expression pattern for basic email validation
     const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
-
     return emailPattern.test(emailInput);
   }
+
   const handleLoginPress = async () => {
     if (email && password) {
       if (isValidEmail(email)) {
@@ -34,6 +31,20 @@ const LoginScreen = ({navigation}) => {
       } else {
         console.log('Please enter a valid email');
       }
+    }
+  };
+
+  const handleLoginGooglePress = async () => {
+    const response = await onGoogleButtonPress();
+    if (response?.user) {
+      setSkipOTP(true);
+    }
+  };
+
+  const handleLoginFacebookPress = async () => {
+    const response = await onFacebookButtonPress();
+    if (response?.user) {
+      setSkipOTP(true);
     }
   };
   return (
@@ -72,9 +83,7 @@ const LoginScreen = ({navigation}) => {
             color={'#de4d41'}
             backgroundColor={'#f5e7fa'}
             btnType={'google'}
-            onPress={() => {
-              onGoogleButtonPress();
-            }}
+            onPress={handleLoginGooglePress}
           />
 
           <ButtonSocial
@@ -82,9 +91,7 @@ const LoginScreen = ({navigation}) => {
             color={'#4867aa'}
             backgroundColor={'#e6eaf4'}
             btnType={'facebook'}
-            onPress={() => {
-              onFacebookButtonPress();
-            }}
+            onPress={handleLoginFacebookPress}
           />
         </View>
       )}

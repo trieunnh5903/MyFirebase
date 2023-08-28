@@ -10,61 +10,51 @@ import React, {useState, useEffect, useContext} from 'react';
 import auth from '@react-native-firebase/auth';
 import ButtonCustom from '../components/ButtonCustom';
 import {AuthContext} from '../utils/AuthProvider';
-const PhoneAuth = ({navigation}) => {
+const PhoneAuth = () => {
   const {setSkipOTP} = useContext(AuthContext);
   const [confirm, setConfirm] = useState(null);
   const [phoneNumber, setPhoneNumber] = useState('');
   // verification code (OTP - One-Time-Passcode)
   const [code, setCode] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  // Handle login
-  function onAuthStateChanged(user) {
-    if (user) {
-      console.log('User is auto-verified:', user.uid);
-      setSkipOTP(true);
-      // Some Android devices can automatically process the verification code (OTP) message, and the user would NOT need to enter the code.
-      // Actually, if he/she tries to enter it, he/she will get an error message because the code was already used in the background.
-      // In this function, make sure you hide the component(s) for entering the code and/or navigate away from this screen.
-      // It is also recommended to display a message to the user informing him/her that he/she has successfully logged in.
-    }
-  }
-
-  useEffect(() => {
-    const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
-    return subscriber; // unsubscribe on unmount
-  }, []);
 
   // Handle the button press
   async function signInWithPhoneNumber(numPhone) {
-    const confirmation = await auth().signInWithPhoneNumber(numPhone);
-    console.log('Verification code sent.');
-    // setIsLoading(false);
-    setConfirm(confirmation);
+    try {
+      const confirmation = await auth().signInWithPhoneNumber(numPhone);
+      console.log('Verification code sent.');
+      setIsLoading(false);
+      setConfirm(confirmation);
+    } catch (error) {
+      console.log('signInWithPhoneNumber', error.message);
+    }
   }
 
-  async function confirmCode() {
+  async function hanndleConfirmCode() {
     try {
       await confirm.confirm(code);
       console.log('Phone verification successful!');
+      setSkipOTP(true);
     } catch (error) {
       console.log('Invalid code.');
     }
   }
 
-  const handlerSendCodePress = () => {
+  const handlerSendCodePress = async () => {
     if (phoneNumber.length < 10) {
       return;
     }
     setIsLoading(true);
-    // chuyen sang ma quoc te +84
+    // firebase chỉ chấp nhận số có đầu quốc tê (+84) -> chuyen sdt có ma quoc te +84
     let phoneNumberConvert = '';
     if (phoneNumber.charAt(0) === '0') {
       phoneNumberConvert = '+84' + phoneNumber.slice(1);
     } else {
       phoneNumberConvert = phoneNumber;
     }
-    signInWithPhoneNumber(phoneNumberConvert);
+    await signInWithPhoneNumber(phoneNumberConvert);
   };
+
   if (!confirm) {
     return (
       <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
@@ -101,7 +91,7 @@ const PhoneAuth = ({navigation}) => {
         value={code}
         onChangeText={text => setCode(text)}
       />
-      <Button title="Confirm Code" onPress={() => confirmCode()} />
+      <Button title="Confirm Code" onPress={() => hanndleConfirmCode()} />
     </View>
   );
 };

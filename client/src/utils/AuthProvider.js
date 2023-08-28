@@ -2,7 +2,6 @@ import React, {createContext, useState} from 'react';
 import auth from '@react-native-firebase/auth';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import {LoginManager, AccessToken} from 'react-native-fbsdk-next';
-import {addUserToFirestore} from './firebase/UserHepler';
 import messaging from '@react-native-firebase/messaging';
 
 export const AuthContext = createContext();
