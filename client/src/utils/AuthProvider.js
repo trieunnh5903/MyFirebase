@@ -3,6 +3,7 @@ import auth from '@react-native-firebase/auth';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import {LoginManager, AccessToken} from 'react-native-fbsdk-next';
 import {addUserToFirestore} from './firebase/UserHepler';
+import messaging from '@react-native-firebase/messaging';
 
 export const AuthContext = createContext();
 
@@ -47,14 +48,13 @@ export const AuthProvider = ({children}) => {
 
   const logout = async () => {
     try {
-      await auth()
-        .signOut()
-        .then(() => {
-          setSkipOTP(false);
-          console.log('User account signed out!');
-        });
+      await auth().signOut();
+      await messaging().deleteToken();
+      setSkipOTP(false);
+      console.log('Delete token current was successful!');
+      console.log('User account signed out!');
     } catch (error) {
-      console.error(error);
+      console.error('logout', error);
     }
   };
 

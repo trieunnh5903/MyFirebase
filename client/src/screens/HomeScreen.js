@@ -15,15 +15,27 @@ import FastImage from 'react-native-fast-image';
 import storage from '@react-native-firebase/storage';
 import {addUserToFirestore} from '../utils/firebase/UserHepler';
 import auth from '@react-native-firebase/auth';
+import messaging from '@react-native-firebase/messaging';
+import {
+  getFcmToken,
+  requestUserPermission,
+  saveTokenToDatabase,
+} from '../utils/firebase/ClouldMessagingHelper';
 
 const HomeScreen = ({navigation}) => {
   const {logout} = useContext(AuthContext);
   const [posts, setPosts] = useState([]);
   const user = auth().currentUser;
-  // console.log(user);
   useEffect(() => {
     // thêm người dùng vào firebase
     addUserToFirestore();
+    //xin quyền push notifications
+    requestUserPermission();
+    //kiểm tra token devices
+    const handleAsyncFunction = async () => {
+      await getFcmToken();
+    };
+    handleAsyncFunction();
     //lấy danh sách bài viết từ firebase
     let data = [];
     const unsubscribe = firestore()
@@ -31,7 +43,7 @@ const HomeScreen = ({navigation}) => {
       .orderBy('createdAt', 'desc')
       // onSnapshot chứa callbacks trả về kq và 1 callbacks xử lí error
       .onSnapshot(querySnapshot => {
-        // câu lệnh chỉ chạy onsnapshot mỗi khi data thay đổi vì vậy cần set data = [] để tránh lặp dữ liệu
+        // câu lệnh chỉ chạy onsnapshot mỗi khi data thay đổi vì vậy cần set data = [] để tránh lặp lại dữ liệu
         // toán tử spread không xử lí trùng dữ liệu
         data = [];
         querySnapshot.forEach(docs => {
@@ -56,7 +68,13 @@ const HomeScreen = ({navigation}) => {
         });
         setPosts(data);
       });
-    return () => unsubscribe();
+    return () => {
+      unsubscribe();
+      // Được gọi khi mã thông báo đăng ký mới được tạo cho thiết bị. Ví dụ: sự kiện này có thể xảy ra khi mã thông báo hết hạn hoặc khi máy chủ vô hiệu hóa mã thông báo.
+      messaging().onTokenRefresh(token => {
+        saveTokenToDatabase(token);
+      });
+    };
   }, []);
 
   const deleteImage = async imageUrl => {
@@ -206,52 +224,6 @@ const HomeScreen = ({navigation}) => {
           );
         }}
       />
-      {/* <ScrollView contentContainerStyle={{padding: 20}}>
-        {posts.map((post, index) => {
-          return (
-            <View style={index !== 0 && {marginTop: 20}} key={post.id}>
-              <View
-                style={{
-                  borderWidth: 1,
-                  borderColor: 'gray',
-                  padding: 10,
-                  borderRadius: 3,
-                }}>
-                <Text style={{color: 'black', marginBottom: 5}}>
-                  {post.title}
-                </Text>
-                <Text style={{color: 'black', marginBottom: 5}}>
-                  {post.createdAt}
-                </Text>
-                <Image
-                  style={{width: '100%', height: 200}}
-                  source={{
-                    uri: post.imageUrl,
-                  }}
-                />
-              </View>
-            </View>
-          );
-        })}
-      </ScrollView> */}
-
-      {/* <View>
-        <View
-          style={{
-            borderWidth: 1,
-            borderColor: 'gray',
-            padding: 10,
-            borderRadius: 3,
-          }}>
-          <Text style={{color: 'black', marginBottom: 5}}>Title</Text>
-          <Image
-            style={{width: '100%', height: 200}}
-            source={{
-              uri: 'https://images.unsplash.com/photo-1528834342297-fdefb9a5a92b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1332&q=80',
-            }}
-          />
-        </View>
-      </View> */}
     </View>
   );
 };

@@ -21,7 +21,7 @@ const InputText = ({placeholder = '', value, onChangeText, iconName}) => {
       <TextInput
         style={{borderLeftWidth: 1, color: 'black', paddingLeft: 10, flex: 1}}
         value={value}
-        placeholderTextColor={'black'}
+        placeholderTextColor={'gray'}
         onChangeText={onChangeText}
         placeholder={placeholder}
       />
