@@ -6,7 +6,7 @@ import {
   FlatList,
   Alert,
 } from 'react-native';
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useContext, memo, useEffect, useState} from 'react';
 import {AuthContext} from '../utils/AuthProvider';
 import ButtonCustom from '../components/ButtonCustom';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -37,7 +37,7 @@ const HomeScreen = ({navigation}) => {
     requestUserPermission();
     //kiểm tra token devices
     getFcmToken();
-    //lấy danh sách bài post
+    //lấy danh sách bài post 
     const unsubscribe = getAllPost(data => {
       setPosts(data);
     });
@@ -80,6 +80,53 @@ const HomeScreen = ({navigation}) => {
     await logout();
     setSkipOTP(false);
   };
+
+  const PostItem = memo(({item, index, formattedDate}) => {
+    return (
+      <View
+        style={{
+          marginTop: index !== 0 ? 20 : 0,
+          backgroundColor: '#e6eaf4',
+          borderColor: 'gray',
+          padding: 10,
+          borderRadius: 3,
+        }}>
+        {/* title */}
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+          }}>
+          <Text
+            style={{
+              color: 'black',
+              fontWeight: 'bold',
+              marginBottom: 5,
+            }}>
+            {item.title}
+          </Text>
+          {/* nut xoa */}
+          <TouchableOpacity
+            onPress={() => onDeletePostPress(item.id, item.imageUrl)}>
+            <Icon name="close" size={24} color="black" />
+          </TouchableOpacity>
+        </View>
+        {/* created at */}
+        <Text style={{color: 'black', marginBottom: 5}}>
+          Created at {formattedDate}
+        </Text>
+        {/* image */}
+        <FastImage
+          style={{width: '100%', height: 200}}
+          source={{
+            uri: item.imageUrl,
+            priority: FastImage.priority.normal,
+          }}
+          resizeMode={FastImage.resizeMode.cover}
+        />
+      </View>
+    );
+  });
 
   return (
     <View style={{flex: 1}}>
@@ -125,7 +172,8 @@ const HomeScreen = ({navigation}) => {
       </View>
       {/* danh sách bài post */}
       <FlatList
-        contentContainerStyle={{padding: 20}}
+        style={{marginTop: 20}}
+        contentContainerStyle={{padding: 20, paddingTop: 0}}
         data={posts}
         keyExtractor={item => item.id + ''}
         renderItem={({item, index}) => {
@@ -134,48 +182,7 @@ const HomeScreen = ({navigation}) => {
             date.getMonth() + 1
           }/${date.getFullYear()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
           return (
-            <View
-              style={{
-                marginTop: index !== 0 ? 20 : 0,
-                backgroundColor: '#e6eaf4',
-                borderColor: 'gray',
-                padding: 10,
-                borderRadius: 3,
-              }}>
-              {/* title */}
-              <View
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                }}>
-                <Text
-                  style={{
-                    color: 'black',
-                    fontWeight: 'bold',
-                    marginBottom: 5,
-                  }}>
-                  {item.title}
-                </Text>
-                {/* nut xoa */}
-                <TouchableOpacity
-                  onPress={() => onDeletePostPress(item.id, item.imageUrl)}>
-                  <Icon name="close" size={24} color="black" />
-                </TouchableOpacity>
-              </View>
-              {/* created at */}
-              <Text style={{color: 'black', marginBottom: 5}}>
-                Created at {formattedDate}
-              </Text>
-              {/* image */}
-              <FastImage
-                style={{width: '100%', height: 200}}
-                source={{
-                  uri: item.imageUrl,
-                  priority: FastImage.priority.normal,
-                }}
-                resizeMode={FastImage.resizeMode.cover}
-              />
-            </View>
+            <PostItem item={item} index={index} formattedDate={formattedDate} />
           );
         }}
       />

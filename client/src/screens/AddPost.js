@@ -19,7 +19,7 @@ import {launchImageLibrary} from 'react-native-image-picker';
 import storage from '@react-native-firebase/storage';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
-import {addImageToStorage} from '../utils/firebase/CloudStorage';
+import {addImageToStorage} from '../utils/firebase/CloudStorageHelper';
 import {addPostToFirestore} from '../utils/firebase/FirestoreHepler';
 
 const AddPost = () => {
@@ -34,7 +34,7 @@ const AddPost = () => {
       quality: 1,
     });
     if (result.didCancel) {
-      Alert.alert('User cancelled camera picker');
+      console.log('User cancelled camera picker');
       return;
     } else if (result.errorCode === 'camera_unavailable') {
       Alert.alert('Camera not available on device');
@@ -54,18 +54,6 @@ const AddPost = () => {
     console.log('type -> ', result.assets[0].type);
     console.log('fileName -> ', result.assets[0].fileName);
     setFilePatch(result.assets[0]);
-  };
-
-  //xu li upload anh
-  const handlerPostImage = async () => {
-    try {
-      const reference = storage().ref('photos/IMG_' + Date.now() + '.png');
-      await reference.putFile(filePatch.uri);
-      return await reference.getDownloadURL();
-    } catch (error) {
-      console.log(error);
-      return null;
-    }
   };
 
   const onPostPress = async () => {
